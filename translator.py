@@ -188,7 +188,7 @@ class GUI():
         sending = threading.Thread(target=lambda messages=messages: self.rcon_send_messages(messages))
         sending.start()
 
-    def read_custom_colors_cfg(self) -> list[tuple[str, str]]:
+    def import_custom_colors_cfg(self) -> list[tuple[str, str]]:
         if not(os.path.exists("./cfg/custom_colors.cfg")):
             return []
         
@@ -197,11 +197,26 @@ class GUI():
         
         list2return = []
         for line in contents.split("\n"):
+            if len(line.split(" ")) < 2:
+                continue
             name = " ".join(line.split(" ")[:-1])
             color = line.split(" ")[-1]
             list2return.append((name, color))
 
         return list2return
+
+    def import_custom_messages(self):
+        files = os.listdir("./cfg")
+        for file in files:
+            if len(file) < 5:
+                files.remove(file)
+            if file[-4:] != ".msg":
+                files.remove(file)
+            if file == "example.msg":
+                files.remove(file)
+        
+        files = [file[:-4] for file in files]
+        return files
 
     def create_gui(self):
         self.main_window = tk.Tk()
@@ -217,7 +232,7 @@ class GUI():
         self.text_box.pack(expand=True, fill='both')
         self.text_box.configure(state="disabled")
 
-        self.custom_colors = self.read_custom_colors_cfg()
+        self.custom_colors = self.import_custom_colors_cfg()
         for name, color in self.custom_colors:
             self.text_box.tag_config(name, foreground=color)
         self.text_box.tag_config("rest", foreground="#FFFFFF")
@@ -231,9 +246,9 @@ class GUI():
         self.menubar.add_cascade(label="File", menu=self.filemenu)
 
         self.helpmenu = tk.Menu(self.menubar, tearoff=0)
-        self.helpmenu.add_command(label="not kicking innocents", command=lambda: self.say_message_script("not_kicking_innocents"))
-        self.helpmenu.add_command(label="cheating not hacking", command=lambda: self.say_message_script("cheating_not_hacking"))
-        self.helpmenu.add_command(label="i dont cheat", command=lambda: self.say_message_script("i_dont_cheat"))
+        custom_messages = self.import_custom_messages()
+        for message in custom_messages:
+            self.helpmenu.add_command(label=message, command=lambda message=message: self.say_message_script(message))
         self.menubar.add_cascade(label="chat-spam", menu=self.helpmenu)
 
         self.main_window.config(menu=self.menubar)
