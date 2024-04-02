@@ -15,11 +15,12 @@ import time
 import textwrap
 
 class backend():
-    def __init__(self, host:str, port:int, passwd:str):
+    def __init__(self, host:str, port:int, passwd:str, tf2_path:str|None=None):
         self.HOST = host
         self.PORT = port
         self.PASSWORD = passwd
-        self.tf2_path = "/home/tex/.steam/steam/steamapps/common/Team Fortress 2/"
+        self.tf2_path = "~/.steam/steam/steamapps/common/Team Fortress 2/" if tf2_path == None else tf2_path
+
         self.known_messages = []
         self.__known_log_length:int = 0
 
@@ -28,18 +29,19 @@ class backend():
                 content = f.read()
             #self.__known_log_length = max(len(content)-100000, 0)
         
-        bot_names = ["DELTATRONIC", "DELTATR0NIC", "DELTATRONC", "DELTATR0NC",
-                          "HEXATRONIC", "HEXATR0NIC", "OMEGATRONIC", "OMEGATR0NIC", "TWILIGHT SPARKLE"]
+        bot_names = ["DELTATRONIC", "DELTATRONC", "HEXATRONIC", "OMEGATRONIC", "TWILIGHT SPARKLE"]
         
-        #expands the botnames to regular expressions for multiple variations
+        # expands the botnames to regular expressions for matching multiple variations of the same name
+        # This is because bots like to use special characters like À nowadays
         self.bot_names_re = []
         self.re_metachars = ["[", "]", "\\", ".", "^", "$", "*", "+", "?", "{", "}", "|", "(", ")"]
         for name in bot_names:
-            name_re = ""
+            name_re = ".*"
             for character in name:
                 if character in self.re_metachars:
                     name_re += "\\"
                 name_re += character + ".*"
+                name_re.replace("O", "(O|0)")
             self.bot_names_re.append(name_re)
     
     def bot_name(self, name:str):
@@ -51,12 +53,10 @@ class backend():
 
     def _get_messages(self, message:str):
         spliced = message.split(" :  ")
-        #print(spliced)
         spliced = [spliced[0], " :  ".join(spliced[1:])]
         message_start = spliced[0]
         
         if self.bot_name(message_start):
-            #print(f"Got message from a bot. (name '{message_start}' matched a re) skipping...")
             return ""
         
         message_2translate = spliced[1]
@@ -66,9 +66,7 @@ class backend():
 
         #if message_2translate != message_translated:
         #    new += "(" + self.detect(message_2translate)[0] + "->en) "
-        #print(spliced)
         new += message_start + " :  " + message_translated
-        #print(new)
         return new
 
     def get_messages(self):
@@ -81,7 +79,6 @@ class backend():
                 pass
         #end_time = time.process_time()
         #time_diff = end_time - start_time
-
         #print(f"CPU Execution time: {time_diff} seconds")
 
         ammount_of_junk = messages.count("")
@@ -114,7 +111,6 @@ class backend():
                     line2 = str(line)[2:-1].replace("\\n", "\n").replace("\\'", "'")
                 content_messages.append(line2)
         
-        #print(content_messages)
         return content_messages
 
     def translate(self, message:str) -> str:
@@ -157,7 +153,6 @@ class backend():
                 response = client.run(command)
             return response
         except Exception as e:
-            #ic(e)
             return ""
 
 
@@ -171,14 +166,17 @@ class GUI():
         self.command_prefix = "/"
         self.bulk_message_delay = 2
 
-        self.backend = backend(host="127.0.0.1", port=27015, passwd="mac_rcon")
+        with open("./cfg/rcon_passwd.cfg", "r") as f:
+            self.rcon_passwd = f.read()
+
+        self.backend = backend(host="127.0.0.1", port=27015, passwd=self.rcon_passwd)
 
     def say_message_script(self, name):
-        if not os.path.exists(f"/home/tex/VSCode/Python/games/tf2/chat_translator/cfg/{name}.msg"):
+        if not os.path.exists(f"./cfg/{name}.msg"):
             self.write_message_to_board(f'message "{name}" not found.')
             return
 
-        with open(f"/home/tex/VSCode/Python/games/tf2/chat_translator/cfg/{name}.msg", "r") as f:
+        with open(f"./cfg/{name}.msg", "r") as f:
             contents = f.read()
         messages = contents.split("\n")
         empty_count = messages.count("")
@@ -187,6 +185,21 @@ class GUI():
 
         sending = threading.Thread(target=lambda messages=messages: self.rcon_send_messages(messages))
         sending.start()
+
+    def read_custom_colors_cfg(self) -> list[tuple[str, str]]:
+        if not(os.path.exists("./cfg/custom_colors.cfg")):
+            return []
+        
+        with open("./cfg/custom_colors.cfg", "r") as f:
+            contents = f.read()
+        
+        list2return = []
+        for line in contents.split("\n"):
+            name = " ".join(line.split(" ")[:-1])
+            color = line.split(" ")[-1]
+            list2return.append((name, color))
+
+        return list2return
 
     def create_gui(self):
         self.main_window = tk.Tk()
@@ -201,8 +214,10 @@ class GUI():
         self.text_box = scrolledtext.ScrolledText(self.main_window, wrap=tk.WORD, background="#202020")
         self.text_box.pack(expand=True, fill='both')
         self.text_box.configure(state="disabled")
-        self.text_box.tag_config("TEX_479", foreground="#00FFFF")
-        self.text_box.tag_config("Honigbi3ne", foreground="#FFFF00")
+
+        self.custom_colors = self.read_custom_colors_cfg()
+        for name, color in self.custom_colors:
+            self.text_box.tag_config(name, foreground=color)
         self.text_box.tag_config("rest", foreground="#FFFFFF")
     
 
@@ -266,10 +281,10 @@ class GUI():
         self.text_box.configure(state="normal")
         messages = message.split("\n")
         for msg in messages:
-            if "TEX_479" in msg.split(" :  ")[0]:
-                self.text_box.insert("end", ("\n" if not self.__first_ever else "") + msg, "TEX_479")
-            elif "Honigbi3ne" in msg.split(" :  ")[0]:
-                self.text_box.insert("end", ("\n" if not self.__first_ever else "") + msg, "Honigbi3ne")
+            for name, color in self.custom_colors:
+                if name in msg.split(" :  ")[0]:
+                    self.text_box.insert("end", ("\n" if not self.__first_ever else "") + msg, name)
+                    break
             else:
                 self.text_box.insert("end", ("\n" if not self.__first_ever else "") + msg, "rest")
             self.__first_ever = False
@@ -295,7 +310,7 @@ class GUI():
                 self.write_message_to_board(string2write)
 
     def _reload_backend(self):
-        self.backend = backend(host="127.0.0.1", port=27015, passwd="mac_rcon")
+        self.backend = backend(host="127.0.0.1", port=27015, passwd=self.rcon_passwd)
         self.text_box.configure(state="normal")
         self.text_box.delete('1.0', tk.END)
         self.text_box.configure(state="disabled")
