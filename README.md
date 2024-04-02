@@ -47,4 +47,8 @@ Now that the script is ready to be run, you only need to add the following to yo
 ```
 -conclearlog -condebug
 ```
-Now you are ready to go.
+Now you are ready to go.\
+\
+**IMPORTANT:** If your tf2 installation **IS NOT** in the following folder, you have to edit the code and change the path in line 22 (if I didn't change that already (idk if I'll forgt to update the README.md when I add/remove some lines.). But you'll just have to see for yourself) to your own `Team Fortress 2` folder.\
+Path that the code is using: `~/.steam/steam/steamapps/common/Team Fortress 2/`\
+If your path is for example `/media/username/external_drive/SteamLibrary/steamapps/common/Team Fortress 2/`, you need to set the path to this one.
