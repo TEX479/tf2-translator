@@ -222,8 +222,8 @@ class GUI():
             if file == "example.msg":
                 continue
             files_filtered.append(file)
-        files_filtered = [files_filtered[:-4] for file in files]
-        return files
+        files_filtered = [file[:-4] for file in files_filtered]
+        return files_filtered
 
     def create_gui(self):
         self.main_window = tk.Tk()
