@@ -20,6 +20,7 @@ class backend():
         self.PORT = port
         self.PASSWORD = passwd
         self.tf2_path = "~/.steam/steam/steamapps/common/Team Fortress 2/" if tf2_path == None else tf2_path
+        self.tf2_path = os.path.expanduser(self.tf2_path)
 
         self.known_messages = []
         self.__known_log_length:int = 0
@@ -89,7 +90,8 @@ class backend():
 
     def _read_messages(self) -> list[str]:
         if not os.path.exists(f"{self.tf2_path}tf/console.log"):
-            return [""]
+            print("could not find console.log")
+            return []
         
         with open(f"{self.tf2_path}tf/console.log", "rb") as f:
             content = f.read()
@@ -164,7 +166,7 @@ class GUI():
         self.gui_running = False
         self.right_monitor = False
         self.command_prefix = "/"
-        self.bulk_message_delay = 2
+        self.bulk_message_delay = 2 #in seconds
 
         with open("./cfg/rcon_passwd.cfg", "r") as f:
             self.rcon_passwd = f.read()
@@ -205,7 +207,7 @@ class GUI():
         self.main_window = tk.Tk()
         self.main_window.title("Chat-Translator")
         height:int = 500
-        width = 1920*2 - (3020 + 250)
+        width = 570
         offset = 1920 if self.right_monitor else 0
         self.main_window.geometry(f"{width}x{height}+{offset+1100+250}+0")
         self.main_window.protocol("WM_DELETE_WINDOW", self.stop)
@@ -237,7 +239,7 @@ class GUI():
         self.main_window.config(menu=self.menubar)
 
         self.chat_box_var = tk.StringVar(self.main_window, "")
-        self.chat_box = tk.Entry(self.main_window, width=50, textvariable=self.chat_box_var)
+        self.chat_box = tk.Entry(self.main_window, width=50, textvariable=self.chat_box_var, background="#202020", foreground="#FFFFFF")
         self.chat_box.pack(fill='both')
         self.chat_box.bind('<Return>', self._say_in_chat, add=None)
 
