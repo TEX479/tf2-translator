@@ -1,5 +1,8 @@
 # Overview
-[Setup](#setup)
+- [random rambeling](#idk-how-to-name-this-section)
+- [Features](#features)
+- [Setup](#setup)
+- [Customization](#customization)
 
 # idk how to name this section
 This program automatically reads the TeamFortress2-chat and translates all the messages that you recieve using google translator. Completely automated. This program is meant to be run alongside tf2 on a second monitor, but do with it what you want. It is easily expandable (as it is built in python (a programming language that is easy to learn (mostly))) and I will add features that I think are helpful, if I can be bothered to get back to coding. I might take suggestions, but this is just a little project I threw together within 3 days, so don't expect too much from me. I will probably be "active" on this tool untill I stop caring about tf2, or I get busy with anything else.
@@ -10,6 +13,8 @@ This program automatically reads the TeamFortress2-chat and translates all the m
 - built in message line that can be used to chat before properly connecting to the game
 - automated message splitting (for messages sent using the program; since tf2 has a limit of 127 characters per message)
 - "library spam" (a way to automatically send long multi-message texts)
+- custom message coloring
+- bad looks (but in dark mode)
 - probably some other stuff too...
 
 # Setup
@@ -27,13 +32,13 @@ You'll need `tkinter`, which at least on debian based systems can be installed u
 sudo apt-get install python3-tk
 ```
 Other than tkinter, there are just python librarys left to install using `pip`: <!-- The packages you need are the following: -->
-```
+```console
 pip3 install rcon googletrans==3.1.0a0
 ```
 (Note: Technically any version of `googletrans` could be used, but i encountered a rare error on my machine that is not present in the version specified. If you want, you can use the newer version, but I don't know if it will spit out the same errors as it did for me.)\
 \
 Finally to run the program, either type
-```
+```console
 python3 translator.py
 ```
 in a terminal in the same directory as the script, or if you don't want to type the command every time into a terminal, do
