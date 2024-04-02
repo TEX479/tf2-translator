@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import threading
-from icecream import ic
+#from icecream import ic
 import rcon.source as rcon
 import tkinter as tk
 from tkinter import scrolledtext, simpledialog
