@@ -52,3 +52,14 @@ Now you are ready to go.\
 **IMPORTANT:** If your tf2 installation **IS NOT** in the following folder, you have to edit the code and change the path in line 22 (if I didn't change that already (idk if I'll forgt to update the README.md when I add/remove some lines.). But you'll just have to see for yourself) to your own `Team Fortress 2` folder.\
 Path that the code is using: `~/.steam/steam/steamapps/common/Team Fortress 2/`\
 If your path is for example `/media/username/external_drive/SteamLibrary/steamapps/common/Team Fortress 2/`, you need to set the path to this one.
+
+# Customization
+The program includes some customization features, for example colored messages or multimessage-scripts. This section will explain how to use these features.
+
+## Colored Names
+To use namecolouring, copy the desired names (seperated using new-lines, so `\n` so the ASCII-character 10) into `cfg/custom_colors.cfg`. Next, add a space, a hashtag and the desired color as 6-digit hexadecimal number. As an example, the line `TEX_479 #00FFFF` is already present in the file.
+
+## Multimessage Scripts
+For this feature, you can add textfiles into the `cfg/` folder. The files must end with `.msg` and need at least one other character in the filename to be read on execution of the program.\
+Upon pressing the corresponding button in the `chat-spam` menu in the menu bar, the contents of the file will be sent line by line. If a line is longer than 127 characters (the tf2 message length limit), the program will split the line on the last possible whitespace.\
+Note that `example.msg` is the only filename ending with `.msg` that will not be shown in the menubar, as it is only for demonstration purposes.

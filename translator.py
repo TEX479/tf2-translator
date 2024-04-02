@@ -185,6 +185,12 @@ class GUI():
         for i in range(empty_count):
             messages.remove("")
 
+        messages_shortend = []
+        for msg in messages:
+            msgs_short = textwrap.wrap(msg, 127, break_long_words=False)
+            for msg_short in msgs_short:
+                messages_shortend.append(msg_short)
+
         sending = threading.Thread(target=lambda messages=messages: self.rcon_send_messages(messages))
         sending.start()
 
@@ -207,15 +213,16 @@ class GUI():
 
     def import_custom_messages(self):
         files = os.listdir("./cfg")
+        files_filtered = []
         for file in files:
             if len(file) < 5:
-                files.remove(file)
+                continue
             if file[-4:] != ".msg":
-                files.remove(file)
+                continue
             if file == "example.msg":
-                files.remove(file)
-        
-        files = [file[:-4] for file in files]
+                continue
+            files_filtered.append(file)
+        files_filtered = [files_filtered[:-4] for file in files]
         return files
 
     def create_gui(self):
