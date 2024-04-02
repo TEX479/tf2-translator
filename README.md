@@ -14,7 +14,7 @@ This program automatically reads the TeamFortress2-chat and translates all the m
 - automated message splitting (for messages sent using the program; since tf2 has a limit of 127 characters per message)
 - "library spam" (a way to automatically send long multi-message texts)
 - custom message coloring
-- bad looks (but in dark mode)
+- bad looks (but in dark mode )
 - probably some other stuff too...
 
 # Setup
