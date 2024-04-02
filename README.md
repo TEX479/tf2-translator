@@ -47,11 +47,21 @@ Now that the script is ready to be run, you only need to add the following to yo
 ```
 -conclearlog -condebug
 ```
-Now you are ready to go.\
+Next, add the following lines to your `autoexec.cfg` inside your `Team Fortress 2/tf/cfg/` folder. If the file doesn't exist, create it. Replace `<password>` with a somewhat secret password (it can't contain any of these characters: `'";` (that might not be all of them, so just don't use the most crazy password)).
+```
+ip 0.0.0.0
+rcon_password <password>
+net_start
+```
+Change `<password>` in this projects `cfg/rcon_passwd.cfg`-file to your secret password you set in `Team Fortress 2/tf/cfg/autoexec.cfg`.
+\
+Now you are (probably) ready to go.\
 \
 **IMPORTANT:** If your tf2 installation **IS NOT** in the following folder, you have to edit the code and change the path in line 22 (if I didn't change that already (idk if I'll forgt to update the README.md when I add/remove some lines.). But you'll just have to see for yourself) to your own `Team Fortress 2` folder.\
 Path that the code is using: `~/.steam/steam/steamapps/common/Team Fortress 2/`\
-If your path is for example `/media/username/external_drive/SteamLibrary/steamapps/common/Team Fortress 2/`, you need to set the path to this one.
+If your path is for example `/media/username/external_drive/SteamLibrary/steamapps/common/Team Fortress 2/`, you need to set the path to this one.\
+\
+**IMPORTANT 2:** The way the `net_start` launch option works, you will not be able to host a local server in this tf2-instance, you will still be able to join community and official servers though. (Idk which messages of the bots from Training you would want to translate anyway ;D)
 
 # Customization
 The program includes some customization features, for example colored messages or multimessage-scripts. This section will explain how to use these features.
