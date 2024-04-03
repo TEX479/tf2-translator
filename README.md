@@ -20,7 +20,13 @@ This program automatically reads the TeamFortress2-chat and translates all the m
 # Setup
 The following setup is a description on what to do to get this tool running on linux. I do not have any expecience with windows and will not add support without enough demand. I will not try to stop this tool from working on windwows. It might, it might not, so just give it a try.\
 \
-To run this program, you need to have python version 3.11 or higher. (Lower versions have not been checked, but might work.) To get python, just go to the [official website](https://www.python.org/), if you don't have it already. Assuming you are on linux you probably have python. To check, type
+Firstly you'll want to download this project. This can be done using the command
+```console
+git pull https://github.com/TEX479/tf2-translator.git
+```
+or by clicking the green `Code` icon on the top right of the file-browser, and then clicking `Download ZIP`.
+\
+Next, to run this program, you need to have python version 3.11 or higher. (Lower versions have not been checked, but might work.) To get python, just go to the [official website](https://www.python.org/), if you don't have it already. Assuming you are on linux you probably have python. To check, type
 ```console
 python --version
 ```
@@ -31,7 +37,7 @@ You'll need `tkinter`, which at least on debian based systems can be installed u
 ```console
 sudo apt-get install python3-tk
 ```
-Other than tkinter, there are just python librarys left to install using `pip`: <!-- The packages you need are the following: -->
+Other than tkinter, there are just python librarys left to install using `pip` (if not installed already get it [here](https://pip.pypa.io/en/stable/installation/)):
 ```console
 pip3 install rcon googletrans==3.1.0a0
 ```
