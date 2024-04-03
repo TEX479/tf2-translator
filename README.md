@@ -18,20 +18,21 @@ This program automatically reads the TeamFortress2-chat and translates all the m
 - probably some other stuff too...
 
 # Setup
-The following setup is a description on what to do to get this tool running on linux. I do not have any expecience with windows and will not add support without enough demand. I will not try to stop this tool from working on windwows. It might, it might not, so just give it a try.\
-\
+The following setup is a description on what to do to get this tool running on linux. I do not have any expecience with windows and will not add support without enough demand. I will not try to stop this tool from working on windwows. It might, it might not, so just give it a try.
+
+## Get the Code
 Firstly you'll want to download this project. This can be done using the command
 ```console
 git pull https://github.com/TEX479/tf2-translator.git
 ```
 or by clicking the green `Code` icon on the top right of the file-browser, and then clicking `Download ZIP`.
-\
+
+## Get the dependencies
 Next, to run this program, you need to have python version 3.11 or higher. (Lower versions have not been checked, but might work.) To get python, just go to the [official website](https://www.python.org/), if you don't have it already. Assuming you are on linux you probably have python. To check, type
 ```console
 python --version
 ```
 in your terminal of choice.\
-\
 Next up you will need to install a few librarys, if they are not already present on your system.\
 You'll need `tkinter`, which at least on debian based systems can be installed using the command
 ```console
@@ -42,7 +43,6 @@ Other than tkinter, there are just python librarys left to install using `pip` (
 pip3 install rcon googletrans==3.1.0a0
 ```
 (Note: Technically any version of `googletrans` could be used, but i encountered a rare error on my machine that is not present in the version specified. If you want, you can use the newer version, but I don't know if it will spit out the same errors as it did for me.)\
-\
 Finally to run the program, either type
 ```console
 python3 translator.py
@@ -51,9 +51,9 @@ in a terminal in the same directory as the script, or if you don't want to type 
 ```console
 chmod +x translator.py
 ```
-and execute the script as if it was a binary. (So you can basically rightclick it and click execute.)\
-\
-\
+and execute the script as if it was a binary. (So you can basically rightclick it and click execute.)
+
+## Setup Team Fortress 2
 Now that the script is ready to be run, you only need to add the following to your TF2 launch options, if you haven't already:
 ```
 -conclearlog -condebug
@@ -66,13 +66,14 @@ net_start
 ```
 Change `<password>` in this projects `cfg/rcon_passwd.cfg`-file to your secret password you set in `Team Fortress 2/tf/cfg/autoexec.cfg`.
 \
-Now you are (probably) ready to go.\
-\
-**IMPORTANT:** If your tf2 installation **IS NOT** in the following folder, you have to edit the code and change the path in line 22 (if I didn't change that already (idk if I'll forgt to update the README.md when I add/remove some lines.). But you'll just have to see for yourself) to your own `Team Fortress 2` folder.\
+Now you are (probably) ready to go.
+
+## Some Notes
+**IMPORTANT 1:** If your tf2 installation **IS NOT** in the following folder, you have to edit the code and change the path in line 22 (if I didn't change that already (idk if I'll forgt to update the README.md when I add/remove some lines.). But you'll just have to see for yourself) to your own `Team Fortress 2` folder.\
 Path that the code is using: `~/.steam/steam/steamapps/common/Team Fortress 2/`\
 If your path is for example `/media/username/external_drive/SteamLibrary/steamapps/common/Team Fortress 2/`, you need to set the path to this one.\
 \
-**IMPORTANT 2:** The way the `net_start` launch option works, you will not be able to host a local server in this tf2-instance, you will still be able to join community and official servers though. (Idk which messages of the bots from Training you would want to translate anyway ;D)
+**IMPORTANT 2:** The way the `net_start` launch option works, you will not be able to host a local server in this tf2-instance, you will still be able to join community and official servers though. (Idk which messages of the bots from Training you would want to translate anyway ;D). Basically, the `map <map_name>` command will be a little broken.
 
 # Customization
 The program includes some customization features, for example colored messages or multimessage-scripts. This section will explain how to use these features.
@@ -84,3 +85,11 @@ To use namecolouring, copy the desired names (seperated using new-lines, so `\n`
 For this feature, you can add textfiles into the `cfg/` folder. The files must end with `.msg` and need at least one other character in the filename to be read on execution of the program.\
 Upon pressing the corresponding button in the `chat-spam` menu in the menu bar, the contents of the file will be sent line by line. If a line is longer than 127 characters (the tf2 message length limit), the program will split the line on the last possible whitespace.\
 Note that `example.msg` is the only filename ending with `.msg` that will not be shown in the menubar, as it is only for demonstration purposes.
+
+# How it works
+TODO
+
+# Reccomended Programs to use alongside the Translator
+- [botkicker (by Bash-09)](https://github.com/Bash-09/tf2-bot-kicker-gui) (discontinued, he is working on MegaAntiCheat now)
+- [MegaAntiCheat](https://github.com/MegaAntiCheat) (still in beta)
+- [Team Fortress 2 ;)](https://store.steampowered.com/app/440/Team_Fortress_2/)
