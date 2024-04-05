@@ -5,4 +5,4 @@ The commands are just basic "say <message>" commands chained together with a coo
 Since these tools are actually intended for use like this (mostly for servers though), it is completely legal.
 The tool uses features of the game as intended.
 If that wouldn't be the case, it would be illegal to bind actions (like jumping) to other buttons as well (and chatting too).
-Hope that answered the questions you may or may not had.
+Hope that answered the questions you may or may not have had.
