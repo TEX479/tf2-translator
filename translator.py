@@ -245,14 +245,14 @@ class GUI():
         self.text_box.tag_config("rest", foreground="#FFFFFF")
     
 
-        self.menubar = tk.Menu(self.main_window)
-        self.filemenu = tk.Menu(self.menubar, tearoff=0)
+        self.menubar = tk.Menu(self.main_window, background="#202020", foreground="#FFFFFF")
+        self.filemenu = tk.Menu(self.menubar, tearoff=0, background="#202020", foreground="#FFFFFF")
         self.filemenu.add_command(label="reload", command=self._reload_backend)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Exit", command=self.stop)
         self.menubar.add_cascade(label="File", menu=self.filemenu)
 
-        self.helpmenu = tk.Menu(self.menubar, tearoff=0)
+        self.helpmenu = tk.Menu(self.menubar, tearoff=0, background="#202020", foreground="#FFFFFF")
         custom_messages = self.import_custom_messages()
         for message in custom_messages:
             self.helpmenu.add_command(label=message, command=lambda message=message: self.say_message_script(message))
