@@ -167,6 +167,7 @@ class GUI():
         self.right_monitor = False
         self.command_prefix = "/"
         self.bulk_message_delay = 2 #in seconds
+        self.exit_bool = False
 
         with open("./cfg/rcon_passwd.cfg", "r") as f:
             self.rcon_passwd = f.read()
@@ -299,9 +300,12 @@ class GUI():
         '''
         #self.save_playerlist()
         self.run_updateloop = False
+        self.exit_bool = True
         self.main_window.destroy()
 
     def write_message_to_board(self, message:str):
+        if self.exit_bool:
+            return
         self.text_box.configure(state="normal")
         messages = message.split("\n")
         for msg in messages:
