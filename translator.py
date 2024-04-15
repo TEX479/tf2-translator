@@ -30,20 +30,19 @@ class backend():
                 content = f.read()
             #self.__known_log_length = max(len(content)-100000, 0)
         
-        bot_names = ["DELTATRONIC", "DELTATRONC", "HEXATRONIC", "OMEGATRONIC", "TWILIGHT SPARKLE"]
+        self.bot_names_re = self.import_botnames()
+
+    def import_botnames(self, path:str= "cfg/botnames.cfg") -> list[str]:
+        if not os.path.exists(path):
+            return []
         
-        # expands the botnames to regular expressions for matching multiple variations of the same name
-        # This is because bots like to use special characters like À nowadays
-        self.bot_names_re = []
-        self.re_metachars = ["[", "]", "\\", ".", "^", "$", "*", "+", "?", "{", "}", "|", "(", ")"]
-        for name in bot_names:
-            name_re = ".*"
-            for character in name:
-                if character in self.re_metachars:
-                    name_re += "\\"
-                name_re += character + ".*"
-                name_re.replace("O", "(O|0)")
-            self.bot_names_re.append(name_re)
+        with open(path, "r") as f:
+            content = f.read()
+        
+        names = content.split("\n")
+        for i in range(names.count("")):
+            names.remove("")
+        return names
     
     def bot_name(self, name:str):
         for pattern in self.bot_names_re:
@@ -164,7 +163,7 @@ class GUI():
         self.keep_scrolling = True
         self.__first_ever = True
         self.gui_running = False
-        self.right_monitor = False
+        self.right_monitor = True
         self.command_prefix = "/"
         self.bulk_message_delay = 2 #in seconds
         self.exit_bool = False
@@ -234,7 +233,7 @@ class GUI():
         offset = 1920 if self.right_monitor else 0
         self.main_window.geometry(f"{width}x{height}+{offset+1100+250}+0")
         self.main_window.protocol("WM_DELETE_WINDOW", self.stop)
-        
+        #self.main_window.overrideredirect(True)
 
         self.text_box = scrolledtext.ScrolledText(self.main_window, wrap=tk.WORD, background="#202020")
         self.text_box.pack(expand=True, fill='both')

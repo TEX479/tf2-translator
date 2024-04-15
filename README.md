@@ -86,6 +86,13 @@ For this feature, you can add textfiles into the `cfg/` folder. The files must e
 Upon pressing the corresponding button in the `chat-spam` menu in the menu bar, the contents of the file will be sent line by line. If a line is longer than 127 characters (the tf2 message length limit), the program will split the line on the last possible whitespace.\
 Note that `example.msg` is the only filename ending with `.msg` that will not be shown in the menubar, as it is only for demonstration purposes.
 
+## Ignoring Spam from Bots
+Disclaimer: This feature is only name-based chat filtering. It does not actually detect bots, so bots with random names will be able to bypass this filtering system *for now*. The filter works by checking if the name of a person who sent a message can be matched to any know regular expression for botnames.\
+### How to set it up
+You will need to add/edit the file `cfg/botnames.cfg`. In this file, every line is a seperate entry for a botname. Or to be more precise, its "regular expression".\
+A guide of how regular expressions work can be found [**here**](https://www.w3schools.com/python/python_regex.asp). The important parts of this article are the sections `Metacharacters`, `Special Sequences` and `Sets`.\
+An [example file](cfg/botnames.cfg) with some common botnames is present in the current version of this programms `cfg`-folder.
+
 # How it works
 TODO
 
