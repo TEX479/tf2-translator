@@ -94,7 +94,11 @@ A guide of how regular expressions work can be found [**here**](https://www.w3sc
 An [example file](cfg/botnames.cfg) with some common botnames is present in the current version of this programms `cfg`-folder.
 
 # How it works
-TODO
+This tool reads the messages that are shown in the console and filters them to only use chat-messages. To do this, it simply looks for lines that have the following character formation in it: ` :  `. A whitespace, followed by a column and two more whitespaces. This is the only pattern (that I know of) that can be used to easily distinguish chat messages from regular console-output. It also filters out messages like `<...> joined the game`.\
+After getting all the messages, they are passed along to the translator library, converted to english text and shown in the textbox.\
+To write messages or to use the "message-scripts", the tool connects to your tf2 instance using ["rcon"](https://developer.valvesoftware.com/wiki/Source_RCON_Protocol) and sends commands like `say "<your message>"`.\
+\
+That pretty much explains how the tool interfaces your tf2 client. If you have any questions remaining, you can try to ask me, but google will probably help you way quicker.
 
 # Reccomended Programs to use alongside the Translator
 - [botkicker (by Bash-09)](https://github.com/Bash-09/tf2-bot-kicker-gui) (discontinued, he is working on MegaAntiCheat now)
