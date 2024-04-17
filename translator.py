@@ -15,7 +15,7 @@ import time
 import textwrap
 
 class backend():
-    def __init__(self, host:str, port:int, passwd:str, tf2_path:str|None=None):
+    def __init__(self, host:str, port:int, passwd:str, tf2_path:str|None=None) -> None:
         self.HOST = host
         self.PORT = port
         self.PASSWORD = passwd
@@ -44,14 +44,14 @@ class backend():
             names.remove("")
         return names
     
-    def bot_name(self, name:str):
+    def bot_name(self, name:str) -> bool:
         for pattern in self.bot_names_re:
             re_value = re.search(pattern, name)
             if re_value != None:
                 return True
         return False
 
-    def _get_messages(self, message:str):
+    def _get_messages(self, message:str) -> str:
         spliced = message.split(" :  ")
         spliced = [spliced[0], " :  ".join(spliced[1:])]
         message_start = spliced[0]
@@ -69,7 +69,7 @@ class backend():
         new += message_start + " :  " + message_translated
         return new
 
-    def get_messages(self):
+    def get_messages(self) -> list[str]:
         messages = self._read_messages()
         #start_time = time.process_time()
         with Pool(16) as p:
@@ -145,7 +145,7 @@ class backend():
         else:
             return "-1", 0
 
-    def rcon_run(self, command:str):
+    def rcon_run(self, command:str) -> str:
         '''
         runs command on the rcon-server
         '''
@@ -154,7 +154,7 @@ class backend():
                 response = client.run(command)
             return response
         except Exception as e:
-            return ""
+            return str(e)
 
 
 class GUI():
@@ -173,7 +173,7 @@ class GUI():
 
         self.backend = backend(host="127.0.0.1", port=27015, passwd=self.rcon_passwd)
 
-    def say_message_script(self, name):
+    def say_message_script(self, name) -> None:
         if not os.path.exists(f"./cfg/{name}.msg"):
             self.write_message_to_board(f'message "{name}" not found.')
             return
@@ -194,26 +194,26 @@ class GUI():
         sending = threading.Thread(target=lambda messages=messages: self.rcon_send_messages(messages))
         sending.start()
 
-    def import_custom_colors_cfg(self) -> list[tuple[str, str]]:
+    def import_custom_colors_cfg(self) -> dict[str]:
         if not(os.path.exists("./cfg/custom_colors.cfg")):
-            return []
+            return {}
         
         with open("./cfg/custom_colors.cfg", "r") as f:
             contents = f.read()
         
-        list2return = []
+        list2return = {}
         for line in contents.split("\n"):
             if len(line.split(" ")) < 2:
                 continue
             name = " ".join(line.split(" ")[:-1])
             color = line.split(" ")[-1]
-            list2return.append((name, color))
+            list2return[name] = color
 
         return list2return
 
-    def import_custom_messages(self):
+    def import_custom_messages(self) -> list[str]:
         files = os.listdir("./cfg")
-        files_filtered = []
+        files_filtered:list[str] = []
         for file in files:
             if len(file) < 5:
                 continue
@@ -225,7 +225,7 @@ class GUI():
         files_filtered = [file[:-4] for file in files_filtered]
         return files_filtered
 
-    def create_gui(self):
+    def create_gui(self) -> None:
         self.main_window = tk.Tk()
         self.main_window.title("Chat-Translator")
         height:int = 500
@@ -240,10 +240,10 @@ class GUI():
         self.text_box.configure(state="disabled")
 
         self.custom_colors = self.import_custom_colors_cfg()
-        for name, color in self.custom_colors:
-            self.text_box.tag_config(name, foreground=color)
+        for name in self.custom_colors:
+            self.text_box.tag_config(name, foreground=self.custom_colors[name])
         self.text_box.tag_config("rest", foreground="#FFFFFF")
-    
+
 
         self.menubar = tk.Menu(self.main_window, background="#202020", foreground="#FFFFFF")
         self.filemenu = tk.Menu(self.menubar, tearoff=0, background="#202020", foreground="#FFFFFF")
@@ -265,7 +265,7 @@ class GUI():
         self.chat_box.pack(fill='both')
         self.chat_box.bind('<Return>', self._say_in_chat, add=None)
 
-    def _say_in_chat(self, event):
+    def _say_in_chat(self, event) -> None:
         msg = self.chat_box_var.get()
         self.chat_box_var.set("")
 
@@ -292,7 +292,7 @@ class GUI():
         sending = threading.Thread(target=lambda lines=lines: self.rcon_send_messages(lines))
         sending.start()
 
-    def stop(self):
+    def stop(self) -> None:
         '''
         gets executed on pressing the "x" to close the window;
         ends all loops concerning the gui and delets itself
@@ -302,13 +302,13 @@ class GUI():
         self.exit_bool = True
         self.main_window.destroy()
 
-    def write_message_to_board(self, message:str):
+    def write_message_to_board(self, message:str) -> None:
         if self.exit_bool:
             return
         self.text_box.configure(state="normal")
         messages = message.split("\n")
         for msg in messages:
-            for name, color in self.custom_colors:
+            for name in self.custom_colors:
                 if name in msg.split(" :  ")[0]:
                     self.text_box.insert("end", ("\n" if not self.__first_ever else "") + msg, name)
                     break
@@ -319,7 +319,7 @@ class GUI():
             self.text_box.yview('end')
         self.text_box.configure(state="disabled")
 
-    def start(self):
+    def start(self) -> None:
         if not self.gui_running:
             self.create_gui()
             self.gui_running = True
@@ -328,7 +328,7 @@ class GUI():
         write_loop.start()
         self.main_window.mainloop()
 
-    def translation_loop(self):
+    def translation_loop(self) -> None:
         while self.run_updateloop:
             time.sleep(5)
             messages = self.backend.get_messages()
@@ -336,13 +336,13 @@ class GUI():
                 string2write = "\n".join(messages)
                 self.write_message_to_board(string2write)
 
-    def _reload_backend(self):
+    def _reload_backend(self) -> None:
         self.backend = backend(host="127.0.0.1", port=27015, passwd=self.rcon_passwd)
         self.text_box.configure(state="normal")
         self.text_box.delete('1.0', tk.END)
         self.text_box.configure(state="disabled")
 
-    def rcon_send_messages(self, messages:list[str]):
+    def rcon_send_messages(self, messages:list[str]) -> None:
         for msg in messages:
             self.backend.rcon_run("say \"" + msg + "\"")
             time.sleep(self.bulk_message_delay)
