@@ -22,6 +22,9 @@ class backend():
         self.tf2_path = "~/.steam/steam/steamapps/common/Team Fortress 2/" if tf2_path == None else tf2_path
         self.tf2_path = os.path.expanduser(self.tf2_path)
 
+        self.names_trusted:list[str] = []
+        self.names_muted:list[str] = []
+
         self.known_messages = []
         self.__known_log_length:int = 0
 
@@ -45,13 +48,37 @@ class backend():
         return names
     
     def bot_name(self, name:str) -> bool:
+        for name2mute in self.names_muted:
+            if name2mute in name:
+                return True
         for pattern in self.bot_names_re:
             re_value = re.search(pattern, name)
             if re_value != None:
                 return True
         return False
 
+    def add_mutes(self, message:str) -> None:
+        message_name = message.split(" :  ")[0]
+        bot_names = []
+        for name_trusted in self.names_trusted:
+            if not (name_trusted in message_name):
+                continue
+            if not (" :  Bots joining " in message):
+                continue
+            bot_names = message.split("team: ")[1]
+            if bot_names[-1] == ".":
+                bot_names = bot_names[:-1]
+            bot_names = bot_names.split(", ")
+            break
+        
+        for bot_name in bot_names:
+            self.names_muted.append(bot_name)
+
     def _get_messages(self, message:str) -> str:
+        
+        # this is just the best place to call this function I guess
+        self.add_mutes(message)
+
         spliced = message.split(" :  ")
         spliced = [spliced[0], " :  ".join(spliced[1:])]
         message_start = spliced[0]
@@ -170,8 +197,11 @@ class GUI():
 
         with open("./cfg/rcon_passwd.cfg", "r") as f:
             self.rcon_passwd = f.read()
+        
+        self.custom_colors = self.import_custom_colors_cfg()
 
         self.backend = backend(host="127.0.0.1", port=27015, passwd=self.rcon_passwd)
+        self.backend.names_trusted = [name for name in self.custom_colors]
 
     def say_message_script(self, name) -> None:
         if not os.path.exists(f"./cfg/{name}.msg"):
@@ -194,7 +224,7 @@ class GUI():
         sending = threading.Thread(target=lambda messages=messages: self.rcon_send_messages(messages))
         sending.start()
 
-    def import_custom_colors_cfg(self) -> dict[str]:
+    def import_custom_colors_cfg(self) -> dict[str, str]:
         if not(os.path.exists("./cfg/custom_colors.cfg")):
             return {}
         
@@ -239,7 +269,6 @@ class GUI():
         self.text_box.pack(expand=True, fill='both')
         self.text_box.configure(state="disabled")
 
-        self.custom_colors = self.import_custom_colors_cfg()
         for name in self.custom_colors:
             self.text_box.tag_config(name, foreground=self.custom_colors[name])
         self.text_box.tag_config("rest", foreground="#FFFFFF")
