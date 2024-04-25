@@ -64,7 +64,7 @@ ip 0.0.0.0
 rcon_password <password>
 net_start
 ```
-Change `<password>` in this projects `cfg/rcon_passwd.cfg`-file to your secret password you set in `Team Fortress 2/tf/cfg/autoexec.cfg`.
+Change `<password>` in this projects `cfg/rcon_passwd.cfg`-file (!!!create it if it doesn't exist yet!!!) to your secret password you set in `Team Fortress 2/tf/cfg/autoexec.cfg`.
 \
 Now you are (probably) ready to go.
 

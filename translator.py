@@ -195,8 +195,11 @@ class GUI():
         self.bulk_message_delay = 2 #in seconds
         self.exit_bool = False
 
-        with open("./cfg/rcon_passwd.cfg", "r") as f:
-            self.rcon_passwd = f.read()
+        if os.path.exists("./cfg/rcon_passwd.cfg"):
+            with open("./cfg/rcon_passwd.cfg", "r") as f:
+                self.rcon_passwd = f.read()
+        else:
+            raise FileNotFoundError(f'File not found: ./cfg/rcon_passwd.cfg')
         
         self.custom_colors = self.import_custom_colors_cfg()
 
@@ -294,7 +297,7 @@ class GUI():
         self.chat_box.pack(fill='both')
         self.chat_box.bind('<Return>', self._say_in_chat, add=None)
 
-    def _say_in_chat(self, event) -> None:
+    def _say_in_chat(self, event:tk.Event) -> None:
         msg = self.chat_box_var.get()
         self.chat_box_var.set("")
 
