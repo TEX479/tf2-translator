@@ -65,10 +65,18 @@ class backend():
                 continue
             if not (" :  Bots joining " in message):
                 continue
-            bot_names = message.split("team: ")[1]
-            if bot_names[-1] == ".":
-                bot_names = bot_names[:-1]
-            bot_names = bot_names.split(", ")
+            message_split = re.split("teams?: ", message, 1)
+            if len(message_split) != 2:
+                '''
+                in automated messages, there has to be either of the following string-slices:
+                "team: ", "teams: "
+                if they aren't there, we can't be sure the message should be processed
+                '''
+                return
+            
+            if message_split[-1] == ".":
+                message_split = message_split[:-1]
+            bot_names = message_split.split(", ")
             break
         
         for bot_name in bot_names:
