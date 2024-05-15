@@ -66,7 +66,7 @@ class backend():
             if not (" :  Bots joining " in message):
                 continue
             message_split = re.split("teams?: ", message, 1)
-            if len(message_split) != 2:
+            if len(message_split) == 1:
                 '''
                 in automated messages, there has to be either of the following string-slices:
                 "team: ", "teams: "
@@ -74,27 +74,26 @@ class backend():
                 '''
                 return
             
+            message_split = message_split[-1]
             if message_split[-1] == ".":
                 message_split = message_split[:-1]
             bot_names = message_split.split(", ")
             break
+        if bot_names == []:
+            return
         
         for bot_name in bot_names:
-            self.names_muted.append(bot_name)
+            if not (bot_name in self.names_muted):
+                self.names_muted.append(bot_name)
 
     def _get_messages(self, message:str) -> str:
-        
-        # this is just the best place to call this function I guess
-        self.add_mutes(message)
-
         spliced = message.split(" :  ")
-        spliced = [spliced[0], " :  ".join(spliced[1:])]
         message_start = spliced[0]
         
         if self.bot_name(message_start):
             return ""
         
-        message_2translate = spliced[1]
+        message_2translate = " :  ".join(spliced[1:])
         message_translated = self.translate(message_2translate)
 
         new = ""
@@ -106,6 +105,11 @@ class backend():
 
     def get_messages(self) -> list[str]:
         messages = self._read_messages()
+
+        # THIS is the correct place to add_mutes(), since access to global variables is broken inside multiprocessing
+        for message in messages:
+            self.add_mutes(message)
+        
         #start_time = time.process_time()
         with Pool(16) as p:
             try:
