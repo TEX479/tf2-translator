@@ -3,6 +3,8 @@
 - [Features](#features)
 - [Setup](#setup)
 - [Customization](#customization)
+- [How it works](#how-it-works)
+- [reccomended software](#reccomended-software)
 
 # idk how to name this section
 This program automatically reads the TeamFortress2-chat and translates all the messages that you recieve using google translator. Completely automated. This program is meant to be run alongside tf2 on a second monitor, but do with it what you want. It is easily expandable (as it is built in python (a programming language that is easy to learn (mostly))) and I will add features that I think are helpful, if I can be bothered to get back to coding. I might take suggestions, but this is just a little project I threw together within 3 days, so don't expect too much from me. I will probably be "active" on this tool untill I stop caring about tf2, or I get busy with anything else.
@@ -14,7 +16,7 @@ This program automatically reads the TeamFortress2-chat and translates all the m
 - automated message splitting (for messages sent using the program; since tf2 has a limit of 127 characters per message)
 - "library spam" (a way to automatically send long multi-message texts)
 - custom message coloring
-- bad looks (but in dark mode )
+- bad looks (but in dark mode)
 - probably some other stuff too...
 
 # Setup
@@ -87,7 +89,7 @@ Upon pressing the corresponding button in the `chat-spam` menu in the menu bar, 
 Note that `example.msg` is the only filename ending with `.msg` that will not be shown in the menubar, as it is only for demonstration purposes.
 
 ## Ignoring Spam from Bots
-Disclaimer: This feature is only name-based chat filtering. It does not actually detect bots, so bots with random names will be able to bypass this filtering system *for now*. The filter works by checking if the name of a person who sent a message can be matched to any know regular expression for botnames.\
+Disclaimer: This feature is only name-based chat filtering. It does not actually detect bots, so bots with random names will be able to bypass this filtering system *for now*. The filter works by checking if the name of a person who sent a message can be matched to any know regular expression for botnames.
 ### How to set it up
 You will need to add/edit the file `cfg/botnames.cfg`. In this file, every line is a seperate entry for a botname. Or to be more precise, its "regular expression".\
 A guide of how regular expressions work can be found [**here**](https://www.w3schools.com/python/python_regex.asp). The important parts of this article are the sections `Metacharacters`, `Special Sequences` and `Sets`.\
@@ -100,7 +102,15 @@ To write messages or to use the "message-scripts", the tool connects to your tf2
 \
 That pretty much explains how the tool interfaces your tf2 client. If you have any questions remaining, you can try to ask me, but google will probably help you way quicker.
 
-# Reccomended Programs to use alongside the Translator
-- [botkicker (by Bash-09)](https://github.com/Bash-09/tf2-bot-kicker-gui) (discontinued, he is working on MegaAntiCheat now)
-- [MegaAntiCheat](https://github.com/MegaAntiCheat) (still in beta)
-- [Team Fortress 2 ;)](https://store.steampowered.com/app/440/Team_Fortress_2/)
+# Reccomended Software
+This is a list of tools that can help out a lot.
+
+### [botkicker (by Bash-09)](https://github.com/Bash-09/tf2-bot-kicker-gui).
+This program is meant to keep track of bots & cheaters, automatically call them out when they join and start votekicks as soon as possible.\
+Another neat feature is the automated bot-marking using "regular expression matching".
+
+### [MegaAntiCheat](https://github.com/MegaAntiCheat)
+Allthough [MegaAntiCheat](https://github.com/MegaAntiCheat) (or "MAC" for short) is still in beta, it already has some great features such as, but not limited to the automated vote-calls on bots. As MAC is not fully released yet, there are still some features left to be added (mostly the "masterbase").
+
+### [Team Fortress 2 ;)](https://store.steampowered.com/app/440/Team_Fortress_2/)
+Well duh. The Translator is meant to interface the game, so if it is not present, this tool has no purpose.
