@@ -4,7 +4,7 @@ import threading
 #from icecream import ic
 import rcon.source as rcon
 import tkinter as tk
-from tkinter import scrolledtext, simpledialog
+from tkinter import scrolledtext, simpledialog, filedialog
 from googletrans import Translator
 from googletrans.models import Translated, Detected
 import time
@@ -13,14 +13,24 @@ import re
 from multiprocessing import Pool
 import time
 import textwrap
+import platform
 
 class backend():
     def __init__(self, host:str, port:int, passwd:str, tf2_path:str|None=None) -> None:
         self.HOST = host
         self.PORT = port
         self.PASSWORD = passwd
-        self.tf2_path = "~/.steam/steam/steamapps/common/Team Fortress 2/" if tf2_path == None else tf2_path
-        self.tf2_path = os.path.expanduser(self.tf2_path)
+        if tf2_path == None:
+            self.tf2_path = "~/.steam/steam/steamapps/common/Team Fortress 2"
+        else:
+            os.path.normpath(tf2_path)
+            self.tf2_path = tf2_path
+        self.tf2_path = "~/.steam/steam/steamapps/common/Team Fortress 2"
+        try:
+            self.tf2_path = os.path.expanduser(self.tf2_path)
+        except Exception as e:
+            print(e)
+            self.tf2_path = ""
 
         self.names_trusted:list[str] = []
         self.names_muted:list[str] = []
@@ -28,10 +38,13 @@ class backend():
         self.known_messages = []
         self.__known_log_length:int = 0
 
-        if os.path.exists(f"{self.tf2_path}tf/console.log"):
-            with open(f"{self.tf2_path}tf/console.log", "rb") as f:
-                content = f.read()
+        if os.path.exists(f"{self.tf2_path}/tf/console.log"):
+            ...
+            #with open(f"{self.tf2_path}tf/console.log", "rb") as f:
+            #    content = f.read()
             #self.__known_log_length = max(len(content)-100000, 0)
+        else:
+            raise FileNotFoundError(f"Could not open 'console.log'. Is the TeamFortress2 directory set properly?")
         
         self.bot_names_re = self.import_botnames()
         self.reload_rcon()
@@ -41,14 +54,16 @@ class backend():
             self.client = rcon.Client(host=self.HOST, port=self.PORT, passwd=self.PASSWORD)
             self.client.connect(True)
         except Exception as e:
-            print(f"An error occured while connecting to the game using rcon:\n{e}")
+            print(f"An error occured while connecting to the game using rcon:\t{e}")
 
     def import_botnames(self, path:str= "cfg/botnames.cfg") -> list[str]:
         if not os.path.exists(path):
             return []
         
-        with open(path, "r") as f:
+        with open(path, "rb") as f:
             content = f.read()
+        
+        content = content.decode(encoding="utf-8", errors="replace")
         
         #names = re.sub("\n\n+", "\n", content).split("\n")
         names = content.split("\n")
@@ -123,8 +138,8 @@ class backend():
         with Pool(16) as p:
             try:
                 messages = p.map(self._get_messages, messages)
-            except:
-                pass
+            except Exception as e:
+                print(e)
         #end_time = time.process_time()
         #time_diff = end_time - start_time
         #print(f"CPU Execution time: {time_diff} seconds")
@@ -136,11 +151,11 @@ class backend():
         return messages
 
     def _read_messages(self) -> list[str]:
-        if not os.path.exists(f"{self.tf2_path}tf/console.log"):
+        if not os.path.exists(f"{self.tf2_path}/tf/console.log"):
             print("could not find console.log")
             return []
         
-        with open(f"{self.tf2_path}tf/console.log", "rb") as f:
+        with open(f"{self.tf2_path}/tf/console.log", "rb") as f:
             content = f.read()
 
         h = len(content)
@@ -219,19 +234,57 @@ class GUI():
         self.command_prefix = "/"
         self.bulk_message_delay = 2 #in seconds
         self.exit_bool = False
+        #self.CRLF = platform.system() == "Windows"
 
         if os.path.exists("./cfg/rcon_passwd.cfg"):
+            #print("found cfg/rcon_passwd.cfg")
             with open("./cfg/rcon_passwd.cfg", "r") as f:
-                self.rcon_passwd = f.read()
-                if self.rcon_passwd[-1] == "\n":
-                    self.rcon_passwd = self.rcon_passwd[:-1]
+                content = f.read()
+            if content[-1] == "\n":
+                content = content[:-1]
+            if content[-1] == "\r":
+                content = content[-1]
+            self.rcon_passwd = content
+            #print(f"{self.rcon_passwd=}")
         else:
-            raise FileNotFoundError(f'File not found: ./cfg/rcon_passwd.cfg')
+            print(f'File not found: ./cfg/rcon_passwd.cfg; requesting password...')
+            self.set_rconpw()
+
+        if os.path.exists("./cfg/tf2dir.cfg"):
+            #print("found cfg/rcon_passwd.cfg")
+            with open("./cfg/tf2dir.cfg", "r") as f:
+                content = f.read()
+            if content[-1] == "\n":
+                content = content[:-1]
+            if content[-1] == "\r":
+                content = content[-1]
+            self.tf2dir = content
+            if not os.path.exists(self.tf2dir):
+                self.set_tf2dir()
+            #print(f"{self.rcon_passwd=}")
+        else:
+            print(f'File not found: ./cfg/tf2dir.cfg; requesting path...')
+            self.set_tf2dir()
         
         self.custom_colors = self.import_custom_colors_cfg()
 
-        self.backend = backend(host="127.0.0.1", port=27015, passwd=self.rcon_passwd)
+        self.backend = backend(host="127.0.0.1", port=27015, passwd=self.rcon_passwd, tf2_path=self.tf2dir)
         self.backend.names_trusted = [name for name in self.custom_colors]
+
+    def set_rconpw(self) -> None:
+        self.rcon_passwd = simpledialog.askstring("Set rcon password", "What is your current rcon password?")
+        if self.rcon_passwd != None:
+            with open("cfg/rcon_passwd.cfg", "w") as f:
+                f.write(self.rcon_passwd)
+        #self.backend.PASSWORD = self.rcon_passwd
+        #self.backend.reload_rcon()
+    
+    def set_tf2dir(self):
+        tf2dir = filedialog.askdirectory(mustexist=True, title="Location of the folder \"Team Fortress 2\"")
+        self.tf2dir = tf2dir
+        with open("cfg/tf2dir.cfg", "w") as f:
+            f.write(tf2dir)
+        #self._reload_backend()
 
     def say_message_script(self, name) -> None:
         if not os.path.exists(f"./cfg/{name}.msg"):
@@ -311,6 +364,11 @@ class GUI():
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Exit", command=self.stop)
         self.menubar.add_cascade(label="File", menu=self.filemenu)
+
+        self.configmenu = tk.Menu(self.menubar, tearoff=0, background="#202020", foreground="#FFFFFF")
+        self.configmenu.add_command(label="set rcon password", command=self.set_rconpw)
+        self.configmenu.add_command(label="set TF2 directory", command=self.set_tf2dir)
+        self.menubar.add_cascade(label="config", menu=self.configmenu)
 
         self.helpmenu = tk.Menu(self.menubar, tearoff=0, background="#202020", foreground="#FFFFFF")
         custom_messages = self.import_custom_messages()
@@ -397,7 +455,7 @@ class GUI():
                 self.write_message_to_board(string2write)
 
     def _reload_backend(self) -> None:
-        self.backend = backend(host="127.0.0.1", port=27015, passwd=self.rcon_passwd)
+        self.backend = backend(host="127.0.0.1", port=27015, passwd=self.rcon_passwd, tf2_path=self.tf2dir)
         self.text_box.configure(state="normal")
         self.text_box.delete('1.0', tk.END)
         self.text_box.configure(state="disabled")
@@ -408,5 +466,7 @@ class GUI():
             self.backend.rcon_run("say \"" + msg + "\"")
             time.sleep(self.bulk_message_delay)
 
+system = platform.system()
+print(f"{system=}")
 gui = GUI()
 gui.start()
