@@ -134,15 +134,19 @@ class backend():
         for message in messages:
             self._auto_add_mutes(message)
         
+        if platform.system() != "Windows":
         #start_time = time.process_time()
-        with Pool(16) as p:
-            try:
-                messages = p.map(self._get_messages, messages)
-            except Exception as e:
-                print(e)
+            with Pool(16) as p:
+                try:
+                    messages = p.map(self._get_messages, messages)
+                except Exception as e:
+                    print(e)
         #end_time = time.process_time()
         #time_diff = end_time - start_time
         #print(f"CPU Execution time: {time_diff} seconds")
+        else:
+            for i in range(len(messages)):
+                messages[i] = self._get_messages(messages[i])
 
         ammount_of_junk = messages.count("")
         for i in range(ammount_of_junk):
