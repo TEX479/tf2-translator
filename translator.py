@@ -234,7 +234,7 @@ class GUI():
         self.keep_scrolling = True
         self.__first_ever = True
         self.gui_running = False
-        self.right_monitor = True
+        self.right_monitor = False
         self.command_prefix = "/"
         self.bulk_message_delay = 2 #in seconds
         self.exit_bool = False
