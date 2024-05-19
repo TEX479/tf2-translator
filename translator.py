@@ -34,6 +34,11 @@ class backend():
             #self.__known_log_length = max(len(content)-100000, 0)
         
         self.bot_names_re = self.import_botnames()
+        self.reload_rcon()
+
+    def reload_rcon(self) -> None:
+        self.client = rcon.Client(host=self.HOST, port=self.PORT, passwd=self.PASSWORD)
+        self.client.connect(True)
 
     def import_botnames(self, path:str= "cfg/botnames.cfg") -> list[str]:
         if not os.path.exists(path):
@@ -57,7 +62,7 @@ class backend():
                 return True
         return False
 
-    def add_mutes(self, message:str) -> None:
+    def _auto_add_mutes(self, message:str) -> None:
         message_name = message.split(" :  ")[0]
         bot_names = []
         for name_trusted in self.names_trusted:
@@ -108,7 +113,7 @@ class backend():
 
         # THIS is the correct place to add_mutes(), since access to global variables is broken inside multiprocessing
         for message in messages:
-            self.add_mutes(message)
+            self._auto_add_mutes(message)
         
         #start_time = time.process_time()
         with Pool(16) as p:
@@ -189,11 +194,15 @@ class backend():
         runs command on the rcon-server
         '''
         try:
-            with rcon.Client(self.HOST, port=self.PORT, passwd=self.PASSWORD) as client:
-                response = client.run(command)
+            response = self.client.run(command)
             return response
-        except Exception as e:
-            return str(e)
+        except Exception as e1:
+            try:
+                self.reload_rcon()
+                response = self.client.run(command)
+                return response
+            except Exception as e2:
+                return str(e1) + "\n#########\n" + str(e2)
 
 
 class GUI():
@@ -210,6 +219,8 @@ class GUI():
         if os.path.exists("./cfg/rcon_passwd.cfg"):
             with open("./cfg/rcon_passwd.cfg", "r") as f:
                 self.rcon_passwd = f.read()
+                if self.rcon_passwd[-1] == "\n":
+                    self.rcon_passwd = self.rcon_passwd[:-1]
         else:
             raise FileNotFoundError(f'File not found: ./cfg/rcon_passwd.cfg')
         
