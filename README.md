@@ -20,16 +20,19 @@ This program automatically reads the TeamFortress2-chat and translates all the m
 - probably some other stuff too...
 
 # Setup
-The following setup is a description on what to do to get this tool running on linux. I do not have any expecience with windows and will not add support without enough demand. I will not try to stop this tool from working on windwows. It might, it might not, so just give it a try.
+The following setup is a description on what to do to get this tool running on linux. I do not have any expecience with windows and will not add support without enough demand (**EDIT: someone asked for an executable for windows, so I made a somewhat stable build for windows**). I will not try to stop this tool from working on windwows. It might, it might not, so just give it a try.\
+\
+To use this program, one can either [run the source code](#running-the-code) or [run a pre-compiled binary](#using-the-binary-executable) that can be run immediately.
 
-## Get the Code
+## running the Code
+### Get the Code
 Firstly you'll want to download this project. This can be done using the command
 ```console
 git pull https://github.com/TEX479/tf2-translator.git
 ```
 or by clicking the green `Code` icon on the top right of the file-browser, and then clicking `Download ZIP`.
 
-## Get the dependencies
+### Get the dependencies
 Next, to run this program, you need to have python version 3.11 or higher. (Lower versions have not been checked, but might work.) To get python, just go to the [official website](https://www.python.org/), if you don't have it already. Assuming you are on linux you probably have python. To check, type
 ```console
 python --version
@@ -53,7 +56,14 @@ in a terminal in the same directory as the script, or if you don't want to type 
 ```console
 chmod +x translator.py
 ```
-and execute the script as if it was a binary. (So you can basically rightclick it and click execute.)
+and execute the script as if it was a binary. (So you can basically rightclick it and click execute.)\
+\
+Now, the only thing left to do is [setting up Team Fortress 2](#setup-team-fortress-2).
+
+## using the binary executable
+Download the [latest release](https://github.com/TEX479/tf2-translator/releases/tag/0.1.0) for your operating system (mac-os will not be supported, do not even think about asking me to do it). Extract the `.zip` file to some place you can remember. To run the translator, just run it like you would run any other program.\
+\
+Now, the only thing left to do is [setting up Team Fortress 2](#setup-team-fortress-2).
 
 ## Setup Team Fortress 2
 Now that the script is ready to be run, you only need to add the following to your TF2 launch options, if you haven't already:
