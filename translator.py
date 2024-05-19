@@ -25,7 +25,7 @@ class backend():
         else:
             os.path.normpath(tf2_path)
             self.tf2_path = tf2_path
-        self.tf2_path = "~/.steam/steam/steamapps/common/Team Fortress 2"
+        
         try:
             self.tf2_path = os.path.expanduser(self.tf2_path)
         except Exception as e:
