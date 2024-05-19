@@ -47,6 +47,7 @@ class backend():
         with open(path, "r") as f:
             content = f.read()
         
+        #names = re.sub("\n\n+", "\n", content).split("\n")
         names = content.split("\n")
         for i in range(names.count("")):
             names.remove("")
