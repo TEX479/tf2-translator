@@ -37,8 +37,11 @@ class backend():
         self.reload_rcon()
 
     def reload_rcon(self) -> None:
-        self.client = rcon.Client(host=self.HOST, port=self.PORT, passwd=self.PASSWORD)
-        self.client.connect(True)
+        try:
+            self.client = rcon.Client(host=self.HOST, port=self.PORT, passwd=self.PASSWORD)
+            self.client.connect(True)
+        except Exception as e:
+            print(f"An error occured while connecting to the game using rcon:\n{e}")
 
     def import_botnames(self, path:str= "cfg/botnames.cfg") -> list[str]:
         if not os.path.exists(path):
@@ -304,6 +307,7 @@ class GUI():
         self.menubar = tk.Menu(self.main_window, background="#202020", foreground="#FFFFFF")
         self.filemenu = tk.Menu(self.menubar, tearoff=0, background="#202020", foreground="#FFFFFF")
         self.filemenu.add_command(label="reload", command=self._reload_backend)
+        self.filemenu.add_command(label="reload rcon", command=self.backend.reload_rcon)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Exit", command=self.stop)
         self.menubar.add_cascade(label="File", menu=self.filemenu)
@@ -397,6 +401,7 @@ class GUI():
         self.text_box.configure(state="normal")
         self.text_box.delete('1.0', tk.END)
         self.text_box.configure(state="disabled")
+        self.__first_ever = True
 
     def rcon_send_messages(self, messages:list[str]) -> None:
         for msg in messages:
