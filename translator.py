@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import threading
-#from icecream import ic
+from icecream import ic
 import rcon.source as rcon
 import tkinter as tk
 from tkinter import scrolledtext, simpledialog, filedialog
@@ -283,7 +283,7 @@ class GUI():
         #self.backend.PASSWORD = self.rcon_passwd
         #self.backend.reload_rcon()
     
-    def set_tf2dir(self):
+    def set_tf2dir(self) -> None:
         tf2dir = filedialog.askdirectory(mustexist=True, title="Location of the folder \"Team Fortress 2\"")
         self.tf2dir = tf2dir
         with open("cfg/tf2dir.cfg", "w") as f:

@@ -33,7 +33,7 @@ git pull https://github.com/TEX479/tf2-translator.git
 or by clicking the green `Code` icon on the top right of the file-browser, and then clicking `Download ZIP`.
 
 ### Get the dependencies
-Next, to run this program, you need to have python version 3.11 or higher. (Lower versions have not been checked, but might work.) To get python, just go to the [official website](https://www.python.org/), if you don't have it already. Assuming you are on linux you probably have python. To check, type
+Next, to run this program, you need to have python version 3.11 or higher. (Lower versions have not been checked, but might work.) To get python, just go to the [official website](https://www.python.org/), if you don't have it already. Assuming you are on linux you probably have python. To check, run
 ```console
 python --version
 ```
@@ -45,9 +45,9 @@ sudo apt-get install python3-tk
 ```
 Other than tkinter, there are just python librarys left to install using `pip` (if not installed already get it [here](https://pip.pypa.io/en/stable/installation/)):
 ```console
-pip3 install rcon googletrans==3.1.0a0
+pip install -r requirements.txt
 ```
-(Note: Technically any version of `googletrans` could be used, but i encountered a rare error on my machine that is not present in the version specified. If you want, you can use the newer version, but I don't know if it will spit out the same errors as it did for me.)\
+<!-- (Note: Technically any version of `googletrans` could be used, but i encountered a rare error on my machine that is not present in the version specified. If you want, you can use the newer version, but I don't know if it will spit out the same errors as it did for me.)\ -->
 Finally to run the program, either type
 ```console
 python3 translator.py
