@@ -12,9 +12,9 @@ This program automatically reads the TeamFortress2-chat and translates all the m
 # Features
 - automated translation of the chat using googletranslator
 - chat filtering, to not show spam from common botnames
-- built in message line that can be used to chat before properly connecting to the game
+- built in message line that can be used to chat before properly connecting to the game, or to run console commands with the message prefix `/`
 - automated message splitting (for messages sent using the program; since tf2 has a limit of 127 characters per message)
-- "library spam" (a way to automatically send long multi-message texts)
+- "chat spam" (a way to automatically send long multi-message texts)
 - custom message coloring
 - bad looks (but in dark mode)
 - probably some other stuff too...
