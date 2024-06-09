@@ -83,11 +83,13 @@ Change `<password>` in this projects `cfg/rcon_passwd.cfg`-file (!!!create it if
 Now you are (probably) ready to go.
 
 ## Some Notes
+<!--
 **IMPORTANT 1:** If your tf2 installation **IS NOT** in the following folder, you have to edit the code and change the path in line 22 (if I didn't change that already (idk if I'll forgt to update the README.md when I add/remove some lines.). But you'll just have to see for yourself) to your own `Team Fortress 2` folder.\
 Path that the code is using: `~/.steam/steam/steamapps/common/Team Fortress 2/`\
 If your path is for example `/media/username/external_drive/SteamLibrary/steamapps/common/Team Fortress 2/`, you need to set the path to this one.\
 \
-**IMPORTANT 2:** The way the `net_start` launch option works, you will not be able to host a local server in this tf2-instance, you will still be able to join community and official servers though. (Idk which messages of the bots from Training you would want to translate anyway ;D). Basically, the `map <map_name>` command will be a little broken.
+-->
+The way the `net_start` comman works, you might not be able to host a game from your client, though you will still be able to join community and official servers. (Idk which messages of the bots from Training you would want to translate anyway ;D). Basically, the `map <map_name>` command will be a little broken.
 
 # Customization
 The program includes some customization features, for example colored messages or multimessage-scripts. This section will explain how to use these features.
