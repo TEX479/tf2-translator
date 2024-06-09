@@ -1,3 +1,4 @@
 message_archives/
 cfg/*
 builds/
+__pycache__/

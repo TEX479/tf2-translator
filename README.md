@@ -48,13 +48,15 @@ Other than tkinter, there are just python librarys left to install using `pip` (
 pip install -r requirements.txt
 ```
 <!-- (Note: Technically any version of `googletrans` could be used, but i encountered a rare error on my machine that is not present in the version specified. If you want, you can use the newer version, but I don't know if it will spit out the same errors as it did for me.)\ -->
+
+### Run the code
 Finally to run the program, either type
 ```console
-python3 translator.py
+python3 main.py
 ```
 in a terminal in the same directory as the script, or if you don't want to type the command every time into a terminal, do
 ```console
-chmod +x translator.py
+chmod +x main.py
 ```
 and execute the script as if it was a binary. (So you can basically rightclick it and click execute.)\
 \
