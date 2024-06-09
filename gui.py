@@ -165,7 +165,7 @@ class GUI():
 
         self.configmenu = tk.Menu(self.menubar, tearoff=0, background=bgc, foreground=fgc)
         self.configmenu.add_command(label="set rcon password", command=self.set_rconpw)
-        self.configmenu.add_command(label="set TF2 directory", command=self.set_tf2dir)
+        self.configmenu.add_command(label="set TF2 directory", command=lambda: self.set_tf2dir(reload=True))
         self.menubar.add_cascade(label="config", menu=self.configmenu)
 
         self.helpmenu = tk.Menu(self.menubar, tearoff=0, background=bgc, foreground=fgc)
