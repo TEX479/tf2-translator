@@ -66,6 +66,8 @@ class GUI():
         self.backend = backend(host="127.0.0.1", port=27015, passwd=self.rcon_passwd, tf2_path=self.tf2dir)
         self.backend.names_trusted = [name for name in self.custom_colors]
 
+        self.theme_default = {"main.bg": "#202020", "main.fg": "#FFFFFF"}
+
     def set_rconpw(self) -> None:
         self.rcon_passwd = simpledialog.askstring("Set rcon password", "What is your current rcon password?")
         if self.rcon_passwd != None:
@@ -134,6 +136,60 @@ class GUI():
         files_filtered = [file[:-4] for file in files_filtered]
         return files_filtered
 
+    def _init_theme(self) -> None: # -> dict[str, str]:
+        self.change_theme(path="cfg/current.theme")
+        
+    def load_theme(self, path:str|None=None) -> dict[str, str] | None:
+        if path == None:
+            path = filedialog.askopenfilename(filetypes=[("theme-file", ".theme")], initialdir="cfg/")
+        #ic(path)
+        if not os.path.exists(path):
+            if path == "cfg/current.theme":
+                return self.theme_default
+            return None
+        
+        try:
+            with open(path, "r") as f:
+                content = f.read()
+            lines = content.replace("\r", "").split("\n")
+            theme = {}
+            for line in lines:
+                name = line.split(": ")[0]
+                content = ": ".join(line.split(": ")[1:])
+                if name == "":
+                    continue
+                theme[name] = content
+            return theme
+        except Exception as exception:
+            print("An error occured while loading the theme:")
+            ic(exception)
+            return None
+
+    def save_theme(self, theme:dict[str, str], path:str|None=None) -> None:
+        if path == None:
+            print("Save-dialog not implemented. ignoring...")
+
+        content = ""
+        for name in theme:
+            if name != "": #and theme[name] != "":
+                content += f"{name}: {theme[name]}\n"
+        
+        try:
+            with open(path, "w") as f:
+                f.write(content)
+        except Exception as exception:
+            print("An error occured during the process of saving the theme:")
+            ic(exception)
+            return
+
+    def change_theme(self, path:str|None=None) -> None:
+        theme = self.load_theme(path=path)
+        if theme == None:
+            return
+        
+        self.apply_theme(theme=theme, theme_defaulting=True)
+        self.save_theme(theme=theme, path="cfg/current.theme")
+
     def create_gui(self) -> None:
         bgc = "#303446" #background colour; old style: '#202020'
         fgc = "#c6d0f5" #foreground colour; old style: '#FFFFFF'
@@ -166,6 +222,7 @@ class GUI():
         self.configmenu = tk.Menu(self.menubar, tearoff=0, background=bgc, foreground=fgc)
         self.configmenu.add_command(label="set rcon password", command=self.set_rconpw)
         self.configmenu.add_command(label="set TF2 directory", command=lambda: self.set_tf2dir(reload=True))
+        self.configmenu.add_command(label="change theme", command=self.change_theme)
         self.menubar.add_cascade(label="config", menu=self.configmenu)
 
         self.helpmenu = tk.Menu(self.menubar, tearoff=0, background=bgc, foreground=fgc)
@@ -180,6 +237,8 @@ class GUI():
         self.chat_box = tk.Entry(self.main_window, width=50, textvariable=self.chat_box_var, background=bgc, foreground=fgc)
         self.chat_box.pack(fill='both')
         self.chat_box.bind('<Return>', self._say_in_chat, add=None)
+
+        self._init_theme()
 
     def _say_in_chat(self, event:tk.Event) -> None:
         msg = self.chat_box_var.get()
@@ -263,6 +322,110 @@ class GUI():
         for msg in messages:
             self.backend.rcon_run("say \"" + msg + "\"")
             time.sleep(self.bulk_message_delay)
+
+    def change_colours(self) -> None:
+        #self.text_box.configure(background="#888888")
+        self.apply_theme(theme={"main.bg": "#FFFFFF", "main.fg": "#000000"})
+
+    def apply_theme(self, theme:dict[str, str], theme_defaulting:bool=True) -> None:
+        '''
+        `theme: dict`
+        theme is a dict which binds color-strings such as "red" or "#00FFFF" to certain strings
+        `main` will be applied first, every other change specified will be applied afterwards
+
+        currently supported names for binding:
+        |name|applies to|
+        |-|-|
+        |`main.bg`|background of the entire app|
+        |`main.fg`|foreground of the entire app|
+        |`textbox.bg`|background of the text box|
+        |`textbox.fg`|foreground of the text box|
+        |`entry.bg`|background of the entry box|
+        |`entry.fg`|foreground of the entry box|
+        |`menubar.bg`|background of the menubar|
+        |`menubar.fg`|foreground of the menubar|
+        |`menuentry.bg`|background of every menubar-entry|
+        |`menuentry.fg`|foreground of every menubar-entry|
+        '''
+        ic(theme)
+
+        if "main.bg" in theme:
+            self.text_box.configure(background=theme["main.bg"])
+            self.chat_box.configure(background=theme["main.bg"])
+            self.menubar.configure(background=theme["main.bg"])
+            self.filemenu.configure(background=theme["main.bg"])
+            self.configmenu.configure(background=theme["main.bg"])
+            self.helpmenu.configure(background=theme["main.bg"])
+        elif theme_defaulting:
+            self.text_box.configure(background=self.theme_default["main.bg"])
+            self.chat_box.configure(background=self.theme_default["main.bg"])
+            self.menubar.configure(background=self.theme_default["main.bg"])
+            self.filemenu.configure(background=self.theme_default["main.bg"])
+            self.configmenu.configure(background=self.theme_default["main.bg"])
+            self.helpmenu.configure(background=self.theme_default["main.bg"])
+        if "main.fg" in theme:
+            #self.text_box.configure(foreground=theme["main.fg"])
+            self.text_box.tag_config("rest", foreground=theme["main.fg"])
+            self.chat_box.configure(foreground=theme["main.fg"])
+            self.menubar.configure(foreground=theme["main.fg"])
+            self.filemenu.configure(foreground=theme["main.fg"])
+            self.configmenu.configure(foreground=theme["main.fg"])
+            self.helpmenu.configure(foreground=theme["main.fg"])
+        elif theme_defaulting:
+            #self.text_box.configure(foreground=self.theme_default["main.fg"])
+            self.text_box.tag_config("rest", foreground=self.theme_default["main.fg"])
+            self.chat_box.configure(foreground=self.theme_default["main.fg"])
+            self.menubar.configure(foreground=self.theme_default["main.fg"])
+            self.filemenu.configure(foreground=self.theme_default["main.fg"])
+            self.configmenu.configure(foreground=self.theme_default["main.fg"])
+            self.helpmenu.configure(foreground=self.theme_default["main.fg"])
+        
+        if "textbox.bg" in theme:
+            self.text_box.configure(background=theme["textbox.bg"])
+        #elif theme_defaulting:
+        #    self.text_box.configure(background=self.theme_default["textbox.bg"])
+        if "textbox.fg" in theme:
+            #self.text_box.configure(foreground=theme["textbox.fg"])
+            self.text_box.tag_config("rest", foreground=theme["textbox.fg"])
+        #elif theme_defaulting:
+        #    self.text_box.configure(foreground=self.theme_default["textbox.fg"])
+        #    self.text_box.tag_config("rest", foreground=self.theme_default["textbox.fg"])
+
+        if "entry.bg" in theme:
+            self.chat_box.configure(background=theme["entry.bg"])
+        #elif theme_defaulting:
+        #    self.chat_box.configure(background=self.theme_default["entry.bg"])
+        if "entry.fg" in theme:
+            self.chat_box.configure(foreground=theme["entry.fg"])
+        #elif theme_defaulting:
+        #    self.chat_box.configure(foreground=self.theme_default["entry.fg"])
+        
+        if "menubar.bg" in theme:
+            self.menubar.configure(background=theme["menubar.bg"])
+        #elif theme_defaulting:
+        #    self.menubar.configure(background=self.theme_default["menubar.bg"])
+        if "menubar.fg" in theme:
+            self.menubar.configure(foreground=theme["menubar.fg"])
+        #elif theme_defaulting:
+        #    self.menubar.configure(foreground=self.theme_default["menubar.fg"])
+        
+        if "menuentry.bg" in theme:
+            self.filemenu.configure(background=theme["menuentry.bg"])
+            self.configmenu.configure(background=theme["menuentry.bg"])
+            self.helpmenu.configure(background=theme["menuentry.bg"])
+        #elif theme_defaulting:
+        #    self.filemenu.configure(background=self.theme_default["menuentry.bg"])
+        #    self.configmenu.configure(background=self.theme_default["menuentry.bg"])
+        #    self.helpmenu.configure(background=self.theme_default["menuentry.bg"])
+        if "menuentry.fg" in theme:
+            self.filemenu.configure(foreground=theme["menuentry.fg"])
+            self.configmenu.configure(foreground=theme["menuentry.fg"])
+            self.helpmenu.configure(foreground=theme["menuentry.fg"])
+        #elif theme_defaulting:
+        #    self.filemenu.configure(foreground=self.theme_default["menuentry.fg"])
+        #    self.configmenu.configure(foreground=self.theme_default["menuentry.fg"])
+        #    self.helpmenu.configure(foreground=self.theme_default["menuentry.fg"])
+
 
 if __name__ == "__main__":
     system = platform.system()
