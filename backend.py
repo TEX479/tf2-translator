@@ -164,7 +164,7 @@ class backend():
         
         content_messages = [] #[line if " :  " in line else "" for line in content.split("\n")]
         for line in content.split(b"\n"):
-            if b" :  " in line:
+            if (b" :  " in line) and not (b"  :  " in line):
                 try:
                     line2 = line.decode("utf-8")
                 except:
