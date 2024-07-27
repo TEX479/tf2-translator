@@ -70,8 +70,9 @@ Now, the only thing left to do is [setting up Team Fortress 2](#setup-team-fortr
 ## Setup Team Fortress 2
 Now that the script is ready to be run, you only need to add the following to your TF2 launch options, if you haven't already:
 ```
--conclearlog -condebug
+-rtp -usercon
 ```
+<sub>(`-rtp` is equivalent to `-condebug -conclearlog -console`)</sub>\
 Next, add the following lines to your `autoexec.cfg` inside your `Team Fortress 2/tf/cfg/` folder. If the file doesn't exist, create it. Replace `<password>` with a somewhat secret password (it can't contain any of these characters: `'";` (that might not be all of them, so just don't use the most crazy password)).
 ```
 ip 0.0.0.0
