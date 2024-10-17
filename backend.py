@@ -1,7 +1,6 @@
 from googletrans import Translator
 from googletrans.models import Translated, Detected
 import os, re, platform
-from icecream import ic
 import rcon.source as rcon
 from multiprocessing import Pool
 

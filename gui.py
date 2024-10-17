@@ -1,18 +1,15 @@
 #!/usr/bin/env python3
 
 import threading
-from icecream import ic
-import rcon.source as rcon
+from icecream import ic # type: ignore
 import tkinter as tk
 from tkinter import scrolledtext, simpledialog, filedialog
 import time
 import os
-import re
-from multiprocessing import Pool
-import time
 import textwrap
 import platform
 from backend import backend
+from typing import Any
 
 
 class GUI():
@@ -31,11 +28,8 @@ class GUI():
             #print("found cfg/rcon_passwd.cfg")
             with open("./cfg/rcon_passwd.cfg", "r") as f:
                 content = f.read()
-            if len(content) != 0:
-                if content[-1] == "\n":
-                    content = content[:-1]
-                if content[-1] == "\r":
-                    content = content[-1]
+            content = content.replace("\r", "")
+            if len(content) != 0 and content[-1] == "\n": content = content[:-1]
             self.rcon_passwd = content
             #print(f"{self.rcon_passwd=}")
         else:
@@ -69,14 +63,15 @@ class GUI():
         self.theme_default = {"main.bg": "#202020", "main.fg": "#FFFFFF"}
 
     def set_rconpw(self) -> None:
-        self.rcon_passwd = simpledialog.askstring("Set rcon password", "What is your current rcon password?")
-        if self.rcon_passwd != None:
-            with open("cfg/rcon_passwd.cfg", "w") as f:
-                f.write(self.rcon_passwd)
+        rcon_passwd = simpledialog.askstring("Set rcon password", "What is your current rcon password?")
+        if rcon_passwd == None:
+            rcon_passwd = ""
+        with open("cfg/rcon_passwd.cfg", "w") as f:
+            f.write(self.rcon_passwd)
         #self.backend.PASSWORD = self.rcon_passwd
         #self.backend.reload_rcon()
     
-    def set_tf2dir(self, reload=False) -> None:
+    def set_tf2dir(self, reload:bool=False) -> None:
         tf2dir = filedialog.askdirectory(mustexist=True, title="Location of the folder \"Team Fortress 2\"")
         self.tf2dir = tf2dir
         with open("cfg/tf2dir.cfg", "w") as f:
@@ -84,25 +79,25 @@ class GUI():
         if reload:
             self._reload_backend()
 
-    def say_message_script(self, name) -> None:
+    def say_message_script(self, name:str) -> None:
         if not os.path.exists(f"./cfg/{name}.msg"):
             self.write_message_to_board(f'message "{name}" not found.')
             return
 
         with open(f"./cfg/{name}.msg", "r") as f:
             contents = f.read()
-        messages = contents.split("\n")
+        messages: list[str] = contents.split("\n")
         empty_count = messages.count("")
-        for i in range(empty_count):
+        for _ in range(empty_count):
             messages.remove("")
 
-        messages_shortend = []
+        messages_shortend: list[str] = []
         for msg in messages:
             msgs_short = textwrap.wrap(msg, 127, break_long_words=False)
             for msg_short in msgs_short:
                 messages_shortend.append(msg_short)
 
-        sending = threading.Thread(target=lambda messages=messages: self.rcon_send_messages(messages))
+        sending = threading.Thread(target=lambda messages=messages: self.rcon_send_messages(messages)) # type: ignore
         sending.start()
 
     def import_custom_colors_cfg(self) -> dict[str, str]:
@@ -112,7 +107,7 @@ class GUI():
         with open("./cfg/custom_colors.cfg", "r") as f:
             contents = f.read()
         
-        list2return = {}
+        list2return: dict[str, str] = {}
         for line in contents.split("\n"):
             if len(line.split(" ")) < 2:
                 continue
@@ -152,7 +147,7 @@ class GUI():
             with open(path, "r") as f:
                 content = f.read()
             lines = content.replace("\r", "").split("\n")
-            theme = {}
+            theme: dict[str, str] = {}
             for line in lines:
                 name = line.split(": ")[0]
                 content = ": ".join(line.split(": ")[1:])
@@ -175,8 +170,8 @@ class GUI():
                 content += f"{name}: {theme[name]}\n"
         
         try:
-            with open(path, "w") as f:
-                f.write(content)
+            with open(path, "w") as f: # type: ignore
+                f.write(content) # type: ignore
         except Exception as exception:
             print("An error occured during the process of saving the theme:")
             ic(exception)
@@ -240,7 +235,7 @@ class GUI():
 
         self._init_theme()
 
-    def _say_in_chat(self, event:tk.Event) -> None:
+    def _say_in_chat(self, _event:Any) -> None:
         msg = self.chat_box_var.get()
         self.chat_box_var.set("")
 
@@ -264,7 +259,7 @@ class GUI():
         #print("msg too long. splitting.....")
         lines = textwrap.wrap(msg, 127, break_long_words=False)
         
-        sending = threading.Thread(target=lambda lines=lines: self.rcon_send_messages(lines))
+        sending = threading.Thread(target=lambda lines=lines: self.rcon_send_messages(lines)) # type: ignore
         sending.start()
 
     def stop(self) -> None:
@@ -291,7 +286,7 @@ class GUI():
                 self.text_box.insert("end", ("\n" if not self.__first_ever else "") + msg, "rest")
             self.__first_ever = False
         if self.keep_scrolling:
-            self.text_box.yview('end')
+            self.text_box.yview('end') # type: ignore
         self.text_box.configure(state="disabled")
 
     def start(self) -> None:
